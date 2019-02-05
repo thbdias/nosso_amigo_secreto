@@ -1,0 +1,39 @@
+docker run -it --rm --user "$(id -u):$(id -g)" -v "$PWD":/usr/src/app -w /usr/src/app rails rails new --skip-bundle nosso_amigo_secreto --database=postgresql
+
+docker-compose build
+
+docker-compose run --rm website bundle install
+
+docker-compose run --rm website bundle exec rails generate rspec:install
+
+docker-compose run --rm website bundle exec rake db:create
+
+docker-compose run --rm website bundle exec rails generate devise:install
+
+docker-compose run --rm website bundle exec rails generate devise User
+
+docker-compose run --rm website bundle exec rake db:migrate
+
+docker-compose run --rm website bundle exec rails generate devise:views
+
+docker-compose run --rm website bundle exec rails g controller Pages home
+
+docker-compose run --rm website bundle exec rails g controller Campaigns show index create update destroy raffle --skip-template-engine
+
+docker-compose run --rm website bundle exec rails g controller Members create destroy update --skip-template-engine
+
+docker-compose run --rm website bundle exec rails g mailer RafflesMailer
+
+docker-compose run --rm website bundle exec rails d mailer RafflesMailer
+
+docker-compose run --rm website bundle exec rails g mailer CampaignMailer raffle
+
+docker-compose run --rm website bundle exec rails g migration add_date_to_campaign event_date:datetime event_hour:string locale:string
+
+docker-compose run --rm website bundle exec rails db:migrate
+
+docker-compose run --rm website bundle exec rails g migration remove_date_to_campaign event_date:datetime event_hour:string locale:string
+
+docker-compose run --rm website bundle exec rails g migration add_date_to_campaign event_date:datetime event_hour:string location:string --force
+
+docker-compose run --rm website bundle exec rails db:migrate
