@@ -1,3 +1,20 @@
+#################################################
+git
+# git checkout -b nome_branch -> criar branch e muda pra ela ao mesmo tempo
+  o comando acima é um atalho para:
+    # git branch iss53
+    # git checkout iss53
+# git checkout master -> mudando para branch master
+# git merge hotfix -> estando na branch master -> merge da master com a branch hotfix
+# git branch -d hotfix -> apaga a branch hotfix
+# git mergetool -> abre uma ferramenta visual de merge adequada e percorre os conflitos
+
+# git branch -> lista branchs
+# git branch -v -> ver último commit de cada branch
+# git branch --merged -> Para ver quais branches já foram mesclados no branch que você está
+# git branch --no-merged -> Para ver todos os branches que contém trabalho que você ainda não fez o merge
+#################################################
+
 docker run -it --rm --user "$(id -u):$(id -g)" -v "$PWD":/usr/src/app -w /usr/src/app rails rails new --skip-bundle nosso_amigo_secreto --database=postgresql
 
 docker-compose build
