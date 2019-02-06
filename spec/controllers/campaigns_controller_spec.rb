@@ -2,11 +2,14 @@ require 'rails_helper'
 
 RSpec.describe CampaignsController, type: :controller do
 
+
+  include Devise::Test::ControllerHelpers
+
+  #cria um usuário e loga no sistema
   before(:each) do
     # request.env["HTTP_ACCEPT"] = 'application/json'
-
     @request.env["devise.mapping"] = Devise.mappings[:user]
-    @current_user = FactoryBot.create(:user)
+    @current_user = FactoryGirl.create(:user)
     sign_in @current_user
   end
 
@@ -18,18 +21,17 @@ RSpec.describe CampaignsController, type: :controller do
           get :show, params: {id: campaign.id}
           expect(response).to have_http_status(:success)
         end
+      end    
+
+      context "User is not the owner of the campaign" do
+        it "Redirects to root" do
+          campaign = create(:campaign)
+          get :show, params: {id: campaign.id}
+
+          expect(response).to redirect_to('/')
+        end
       end
     end
-
-    context "User is not the owner of the campaign" do
-      it "Redirects to root" do
-        campaign = create(:campaign)
-        get :show, params: {id: campaign.id}
-
-        expect(response).to redirect_to('/')
-      end
-    end
-    
 
     context "campaign don't exists" do
       it "Redirects to root" do
@@ -39,6 +41,8 @@ RSpec.describe CampaignsController, type: :controller do
     end
   end
 
+
+  # /campaigns
   describe "GET #index" do
     it "returns http success" do
       get :index
@@ -60,24 +64,23 @@ RSpec.describe CampaignsController, type: :controller do
     it "Create campaign with right attributes" do
       expect(Campaign.last.user).to eql(@current_user)
       expect(Campaign.last.title).to eql(@campaign_attributes[:title])
+      # expect(Campaign.last.title).to eql("Nova Campanha")
       expect(Campaign.last.description).to eql(@campaign_attributes[:description])
+      # expect(Campaign.last.description).to eql("Descreva sua campanha...")
       expect(Campaign.last.status).to eql('pending')
     end
 
     it "Create campaign with owner associated as a member" do
       expect(Campaign.last.members.last.name).to eql(@current_user.name)
       expect(Campaign.last.members.last.email).to eql(@current_user.email)
-    end
-
-    it "returns http success" do
-      get :create
-      expect(response).to have_http_status(:success)
-    end
+    end    
   end
 
   describe "GET #update" do
     before(:each) do
+      # gera um hash com os atributos de uma possível campanha
       @new_campaign_attributes = attributes_for(:campaign)
+      # chamada json
       request.env["HTTP_ACCEPT"] = 'application/json'
     end
 
@@ -101,6 +104,7 @@ RSpec.describe CampaignsController, type: :controller do
       it "returns http forbidden" do
         campaign = create(:campaign)
         put :update, params: {id: campaign.id, campaign: @new_campaign_attributes}
+        # não tem direito de atualizar a campanha pois não é dono
         expect(response).to have_http_status(:forbidden)
       end
     end    
@@ -123,26 +127,31 @@ RSpec.describe CampaignsController, type: :controller do
       it "returns http forbidden" do
         campaign = create(:campaign)
         delete :destroy, params: {id: campaign.id}
-        expect(response).to have_http_status(:forbidden)
+        # forbidden -> cara não tem direito de apagar a campanha
+        expect(response).to have_http_status(:forbidden) 
       end
     end    
   end
 
+  # sorteio 
   describe "GET #raffle" do
     before(:each) do
       request.env["HTTP_ACCEPT"] = 'application/json'
     end
 
+    # só donos de campanha podem fazer sorteios
     context "User is the Campaign Owner" do
       before(:each) do
         @campaign = create(:campaign, user: @current_user)
       end
 
-      context "Has more than two members" do
+      context "Has more than two members" do        
         before(:each) do
+          # cria 3 membros (total de 4, pois o dono da campanha já é adicionado)
           create(:member, campaign: @campaign)
           create(:member, campaign: @campaign)
           create(:member, campaign: @campaign)
+          # realiza o sorteio
           post :raffle, params: {id: @campaign.id}
         end
 
@@ -158,6 +167,7 @@ RSpec.describe CampaignsController, type: :controller do
         end
 
         it "returns http success" do
+          # não irá fazer o sorteio (não processa) quando tiver apenas 2 pessoas
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end
@@ -170,6 +180,7 @@ RSpec.describe CampaignsController, type: :controller do
       end
 
       it "returns http forbidden" do
+        # não pode fazer o sorteio (raffle) da campanha
         expect(response).to have_http_status(:forbidden)
       end
     end
