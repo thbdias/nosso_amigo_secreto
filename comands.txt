@@ -54,3 +54,5 @@ docker-compose run --rm website bundle exec rails g migration remove_date_to_cam
 docker-compose run --rm website bundle exec rails g migration add_date_to_campaign event_date:datetime event_hour:string location:string --force
 
 docker-compose run --rm website bundle exec rails db:migrate
+
+docker-compose run --rm website bundle exec rspec spec/services/raffle_service_spec.rb

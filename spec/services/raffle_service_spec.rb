@@ -44,7 +44,7 @@ describe RaffleService do
         # Desafio
         @results.each do |r|                              
           @results.each do |k|
-            if (r.first.eql(k.last)) 
+            if (r.first == k.last) 
               expect(r.last).not_to eq(k.first)
             end
           end
