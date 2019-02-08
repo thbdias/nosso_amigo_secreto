@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe CampaignsController, type: :controller do
 
-
   include Devise::Test::ControllerHelpers
 
   #cria um usuário e loga no sistema
@@ -63,10 +62,10 @@ RSpec.describe CampaignsController, type: :controller do
 
     it "Create campaign with right attributes" do
       expect(Campaign.last.user).to eql(@current_user)
-      expect(Campaign.last.title).to eql(@campaign_attributes[:title])
-      # expect(Campaign.last.title).to eql("Nova Campanha")
-      expect(Campaign.last.description).to eql(@campaign_attributes[:description])
-      # expect(Campaign.last.description).to eql("Descreva sua campanha...")
+      # expect(Campaign.last.title).to eql(@campaign_attributes[:title])
+      expect(Campaign.last.title).to eql("Nova Campanha")
+      # expect(Campaign.last.description).to eql(@campaign_attributes[:description])
+      expect(Campaign.last.description).to eql("Descreva sua campanha...")
       expect(Campaign.last.status).to eql('pending')
     end
 
