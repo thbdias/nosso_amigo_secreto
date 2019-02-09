@@ -1,3 +1,6 @@
+Problema de permissão:
+sudo chown -R $USER:$USER .
+
 #################################################
 git
 # git checkout -b nome_branch -> criar branch e muda pra ela ao mesmo tempo
