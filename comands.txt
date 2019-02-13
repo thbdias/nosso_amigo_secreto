@@ -59,3 +59,9 @@ docker-compose run --rm website bundle exec rails g migration add_date_to_campai
 docker-compose run --rm website bundle exec rails db:migrate
 
 docker-compose run --rm website bundle exec rspec spec/services/raffle_service_spec.rb
+
+docker-compose run --rm website bundle exec rails g inky:install
+
+localhost:1080    -> mail catcher
+
+localhost:3000/sidekiq
