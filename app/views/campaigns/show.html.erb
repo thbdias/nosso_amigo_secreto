@@ -75,7 +75,7 @@
             <% end %>
           </div>
 
-          <%= form_for(Member.new) do |f| %>
+          <%= form_for(Member.new) do |f| %>        <!-- chama o 'create' -->
             <div class="member">
               <div class="row">
                 <%= f.hidden_field :campaign_id, value: @campaign.id %>
