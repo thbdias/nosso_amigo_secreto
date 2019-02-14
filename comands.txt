@@ -67,3 +67,15 @@ localhost:1080    -> mail catcher
 localhost:3000/sidekiq
 
 docker-compose run --rm app bundle exec rake secret
+
+docker-compose -f docker-compose-prod.yml build
+
+docker-compose run --rm app bundle exec rake assets:precompile
+
+# exec -> para quando o sistema já estiver de pé -> up
+      docker-compose -f docker-compose-prod.yml exec app bundle exec rake db:create db:migrate
+
+# run --rm -> para quando o sistema não estiver em pé
+      docker-compose -f docker-compose-prod.yml run --rm app bundle exec rake db:create db:migrate
+
+docker-compose -f docker-compose-prod.yml up --build
